@@ -102,6 +102,20 @@
     40% { margin-left: 16px; } 60% { margin-left: -12px; } 80% { margin-left: 8px; }
   }
 
+  /* ── 득점 플로터: 쓰다듬는 곳 옆에 +00 이 떠올랐다 사라진다 ── */
+  .float-pt {
+    position: fixed; pointer-events: none; z-index: 98;
+    font-family: "ChosunGu", sans-serif; font-size: 30px; font-weight: 700;
+    color: #111; text-shadow: 0 0 6px rgba(255,255,255,.55);
+    animation: floatUp .9s ease-out forwards;
+  }
+  .float-pt.bonus { font-size: 38px; color: #fff; text-shadow: 0 0 6px rgba(0,0,0,.6); }
+  @keyframes floatUp {
+    0%   { opacity: 0; transform: translate(-50%, 8px) scale(.85); }
+    18%  { opacity: 1; transform: translate(-50%, -6px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -64px) scale(1); }
+  }
+
   /* ── 커서 ── */
   #cursor {
     position: fixed; left: 0; top: 0; width: 190px; pointer-events: none;
@@ -265,8 +279,8 @@
 
   const rand = (a, b) => a + Math.random() * (b - a);
   const lerp = (a, b, t) => a + (b - a) * t;
-  // 0(시작) → 1(최고 난이도). 90초에 걸쳐 점점 어려워진다.
-  const difficulty = () => phase === 'play' ? Math.min(1, (performance.now() - playStart) / 90000) : 0;
+  // 0(시작) → 1(최고 난이도). 30초에 걸쳐 점점 어려워진다.
+  const difficulty = () => phase === 'play' ? Math.min(1, (performance.now() - playStart) / 30000) : 0;
   const fmt = n => String(Math.floor(n)).padStart(3, '0');
 
   function show(name) {
@@ -320,8 +334,16 @@
         if (state === 2) rate *= 2.5; // 위험을 무릅쓴 쓰다듬기는 보너스
         score += rate * dt;
         scoreGameEl.textContent = fmt(score);
+        // 쌓인 득점을 잠깐씩 모아 +00 플로터로 띄운다
+        floatAcc += rate * dt;
+        floatClock += dt;
+        if (floatClock >= 0.35) {
+          spawnFloater(Math.round(floatAcc), state === 2);
+          floatAcc = 0; floatClock = 0;
+        }
       } else if (!holding) {
         holdStreak = 0;
+        floatAcc = 0; floatClock = 0;
       }
       mouse1Img.classList.toggle('petting', holding && state === 1);
     }
@@ -339,6 +361,21 @@
   function release() {
     holding = false;
     cursorImg.src = 'assets/hand1.svg';
+  }
+
+  // ── 득점 플로터 ──
+  let floatAcc = 0, floatClock = 0;
+  function spawnFloater(pts, bonus) {
+    if (pts <= 0) return;
+    const el = document.createElement('div');
+    el.className = 'float-pt' + (bonus ? ' bonus' : '');
+    el.textContent = '+' + String(pts).padStart(2, '0');
+    const x = parseFloat(cursorEl.style.left) || innerWidth / 2;
+    const y = parseFloat(cursorEl.style.top) || innerHeight / 2;
+    el.style.left = (x + 52 + rand(-14, 14)) + 'px'; // 손 옆에서, 살짝 흩어지며
+    el.style.top  = (y - 18 + rand(-10, 10)) + 'px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
   }
 
   let hasPointer = false; // 포인터 위치를 한 번이라도 받았는지 (터치 기기는 hover가 없다)
