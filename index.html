@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Don't 땃쥐 me</title>
+<style>
+  /* 점수: 승리의 그날까지(TVC) — 숫자만 쓰므로 라틴 서브셋. 재배포 금지 라이선스라 공식 CDN 링크 사용 */
+  @font-face {
+    font-family: 'TillVictoryComes';
+    src: url('https://cdn.jsdelivr.net/gh/tillvictorycomes/TillVictoryComes-font/tillvictorycomes-Regular-latin.woff') format('woff');
+    font-weight: normal; font-style: normal; font-display: swap;
+  }
+  /* 나머지 텍스트: 조선굴림체 */
+  @font-face {
+    font-family: 'ChosunGu';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/ChosunGu.woff') format('woff');
+    font-weight: normal; font-style: normal; font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden; background: #111;
+    touch-action: none; overscroll-behavior: none;
+    -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+  }
+  body { font-family: "ChosunGu", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+
+  #stage-wrap {
+    position: absolute; left: 50%; top: 50%;
+    width: 1440px; height: 1024px;
+    transform-origin: center center;
+  }
+  .screen {
+    position: absolute; inset: 0; overflow: hidden;
+    display: none;
+  }
+  .screen.active { display: block; }
+  .abs { position: absolute; }
+
+  /* ── 배경 (Figma 프레임 페인트 그대로) ── */
+  #screen-start    { background: linear-gradient(180deg, #888888 0%, #1A1818 100%); }
+  #screen-game     { background: linear-gradient(180deg, #888888 0%, #B1B1B1 100%); }
+  #screen-game.st3 { background: #888888; }
+  #screen-over     { background: linear-gradient(180deg, #888888 0%, #B1B1B1 100%); }
+
+  .vignette {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle closest-side, #252525 3.7%, rgba(102,102,102,0) 100%);
+  }
+  .vig-1825 { left: -457px; top: -611px; width: 1825px; height: 1825px; }
+  .vig-2442 { left: -1042px; top: -1068px; width: 2442px; height: 2442px; }
+
+  /* ── 점수 ── */
+  .score {
+    position: absolute; left: 60px; top: 60px;
+    font-family: 'TillVictoryComes', sans-serif;
+    font-size: 112px; font-weight: normal; color: #111;
+    letter-spacing: 2px; user-select: none;
+  }
+  .score.bump { animation: bump .15s ease-out; }
+  @keyframes bump { 50% { transform: scale(1.08); } }
+
+  /* ── 버튼 (Figma 프레임 위치/크기) ── */
+  .btn {
+    position: absolute; display: flex; align-items: center; justify-content: center;
+    background: #fff; border: 3px solid #111; border-radius: 18px;
+    font-weight: 800; color: #111; cursor: pointer; user-select: none;
+    transition: transform .08s ease, background .08s ease;
+  }
+  .btn:hover { background: #f1f1f1; transform: scale(1.03); }
+  .btn:active { transform: scale(.97); }
+  .btn-lg { font-size: 42px; }
+  .btn-sm { font-size: 24px; border-radius: 14px; }
+
+  .caption {
+    position: absolute; left: 0; right: 0; text-align: center;
+    font-size: 34px; font-weight: 600; color: #111; user-select: none;
+  }
+
+  .danger-box {
+    position: absolute; left: 662px; top: 892px; width: 116px; height: 68px;
+    background: #fff; border: 3px solid #111; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 800; color: #111;
+    animation: blink .35s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  /* ── 게임 상태 레이어 ── */
+  .state-layer { position: absolute; inset: 0; display: none; }
+  .state-layer.on { display: block; }
+  img { -webkit-user-drag: none; user-select: none; }
+
+  #mouse1-img.petting { animation: rock .35s ease-in-out infinite; transform-origin: 55% 90%; }
+  @keyframes rock { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-1.6deg); } }
+
+  #stage-wrap.shake { animation: shake .4s linear; }
+  @keyframes shake {
+    0%,100% { margin-left: 0; } 20% { margin-left: -18px; }
+    40% { margin-left: 16px; } 60% { margin-left: -12px; } 80% { margin-left: 8px; }
+  }
+
+  /* ── 커서 ── */
+  #cursor {
+    position: fixed; left: 0; top: 0; width: 190px; pointer-events: none;
+    display: none; z-index: 99; transform: translate(-16px, -10px);
+  }
+  #cursor img { width: 100%; display: block; }
+  body.playing, body.playing * { cursor: none !important; }
+
+  /* ── 대시보드 오버레이 ── */
+  #dash {
+    position: absolute; inset: 0; display: none; z-index: 50;
+    background: rgba(0,0,0,.55); align-items: center; justify-content: center;
+  }
+  #dash.open { display: flex; }
+  #dash .panel {
+    background: #fff; border: 4px solid #111; border-radius: 24px;
+    padding: 56px 88px; text-align: center;
+  }
+  #dash h2 { font-size: 44px; margin-bottom: 24px; }
+  #dash p { font-family: 'TillVictoryComes', sans-serif; font-size: 72px; font-weight: normal; margin-bottom: 36px; }
+
+  #toast {
+    position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+    background: #111; color: #fff; padding: 14px 28px; border-radius: 999px;
+    font-size: 24px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 60;
+  }
+  #toast.show { opacity: 1; }
+
+  /* ── 모바일: 세로로 들면 회전 안내 ── */
+  #rotate {
+    position: fixed; inset: 0; z-index: 200; display: none;
+    background: #1A1818; color: #fff;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; text-align: center;
+  }
+  #rotate .phone { font-size: 64px; animation: tilt 1.6s ease-in-out infinite; }
+  @keyframes tilt { 0%,20% { transform: rotate(0deg); } 60%,100% { transform: rotate(90deg); } }
+  #rotate p { font-size: 20px; line-height: 1.6; }
+  @media (orientation: portrait) and (pointer: coarse) {
+    #rotate { display: flex; }
+  }
+</style>
+</head>
+<body>
+<div id="stage-wrap">
+
+  <!-- ══ 시작화면 ══ -->
+  <section id="screen-start" class="screen active">
+    <img class="abs" src="assets/bubble.svg"      style="left:125px;   top:38.2px;  width:777px;">
+    <img class="abs" src="assets/txt-dont.svg"    style="left:366.9px; top:201.7px; width:307px;">
+    <img class="abs" src="assets/txt-ttatjwi.svg" style="left:303.7px; top:384px;   width:304px;">
+    <img class="abs" src="assets/txt-me.svg"      style="left:514.2px; top:575.1px; width:172px;">
+    <img class="abs" src="assets/mouse-start.svg" style="left:626.8px; top:166.8px; width:590px;">
+    <div class="btn btn-lg" id="btn-start" style="left:520px; top:722.5px; width:178px; height:101px;">Start</div>
+    <div class="btn btn-sm" data-act="dash"  style="left:432px; top:841.5px; width:164px; height:80px;">대시보드</div>
+    <div class="btn btn-sm" data-act="share" style="left:627px; top:841.5px; width:164px; height:80px;">공유하기</div>
+  </section>
+
+  <!-- ══ 게임화면 ══ -->
+  <section id="screen-game" class="screen">
+    <!-- 상태1 : 한눈팔기 -->
+    <div class="state-layer on" id="layer-1">
+      <img id="mouse1-img" class="abs" src="assets/mouse-state1.svg" style="left:380.5px; top:162.5px; width:642px;">
+      <div class="caption" style="top:902px;">스페이스바 또는 클릭으로 땃쥐를 쓰다듬자.</div>
+    </div>
+    <!-- 상태2 : 고개 돌림 -->
+    <div class="state-layer" id="layer-2">
+      <div class="vignette vig-1825"></div>
+      <img class="abs" src="assets/mouse-state2.svg" style="left:338.1px; top:177.1px; width:654px;">
+      <div class="danger-box">위험!!</div>
+    </div>
+    <!-- 상태3 : 폭발 직전 -->
+    <div class="state-layer" id="layer-3">
+      <div class="vignette vig-2442"></div>
+      <img class="abs" src="assets/mouse-state3.svg" style="left:88.8px; top:82.6px; width:1352px;">
+    </div>
+    <div class="score" id="score-game">000</div>
+  </section>
+
+  <!-- ══ 게임오버 ══ -->
+  <section id="screen-over" class="screen">
+    <div class="vignette vig-1825"></div>
+    <img class="abs" src="assets/bubble.svg"      style="left:30px;    top:65.7px;  width:777px;">
+    <img class="abs" src="assets/txt-dont.svg"    style="left:271.9px; top:229.2px; width:307px;">
+    <img class="abs" src="assets/txt-ttatjwi.svg" style="left:208.7px; top:411.5px; width:304px;">
+    <img class="abs" src="assets/txt-me.svg"      style="left:419.2px; top:602.5px; width:172px;">
+    <img class="abs" src="assets/mouse-start.svg" style="left:531.8px; top:194.3px; width:590px;">
+    <img class="abs" src="assets/txt-gameover.svg" style="left:1072.4px; top:74.1px; width:292px;">
+    <div class="btn btn-lg" id="btn-retry" style="left:1140px; top:347px; width:228px; height:101px;">다시시작</div>
+    <div class="btn btn-sm" data-act="dash"  style="left:1204px; top:464px; width:164px; height:80px;">대시보드</div>
+    <div class="btn btn-sm" data-act="share" style="left:1204px; top:560px; width:164px; height:80px;">공유하기</div>
+    <div class="score" id="score-over">000</div>
+    <div class="caption" style="top:916px; left:auto; right:72px; width:621px; text-align:center;">땃쥐의 심기를 제대로 건드려버렸다...</div>
+  </section>
+
+  <!-- 대시보드 오버레이 -->
+  <div id="dash">
+    <div class="panel">
+      <h2>최고 기록</h2>
+      <p id="best-score">000</p>
+      <div class="btn btn-sm" style="position:relative; width:164px; height:64px; margin:0 auto;" id="btn-dash-close">닫기</div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<!-- 커스텀 커서 -->
+<div id="cursor"><img id="cursor-img" src="assets/hand1.svg"></div>
+
+<!-- 세로 모드 안내 -->
+<div id="rotate">
+  <div class="phone">📱</div>
+  <p>가로 모드로 돌려서 플레이해 주세요!</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ── 화면 스케일링 (1440×1024 고정 캔버스) ──
+  const wrap = document.getElementById('stage-wrap');
+  function fit() {
+    const s = Math.min(innerWidth / 1440, innerHeight / 1024);
+    wrap.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', () => setTimeout(fit, 150));
+  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  fit();
+
+  // ── DOM ──
+  const screens = {
+    start: document.getElementById('screen-start'),
+    game:  document.getElementById('screen-game'),
+    over:  document.getElementById('screen-over'),
+  };
+  const layers = [null,
+    document.getElementById('layer-1'),
+    document.getElementById('layer-2'),
+    document.getElementById('layer-3')];
+  const scoreGameEl = document.getElementById('score-game');
+  const scoreOverEl = document.getElementById('score-over');
+  const mouse1Img   = document.getElementById('mouse1-img');
+  const cursorEl    = document.getElementById('cursor');
+  const cursorImg   = document.getElementById('cursor-img');
+  const toastEl     = document.getElementById('toast');
+
+  const BEST_KEY = 'ttatjwi-best';
+
+  // ── 게임 상태 ──
+  let phase = 'start';      // start | play | over
+  let state = 1;            // 1 한눈팔기 | 2 고개돌림 | 3 폭발직전
+  let score = 0;
+  let holding = false;      // 클릭 or 스페이스 유지 중
+  let holdStreak = 0;       // 상태1에서 연속으로 쓰다듬은 시간(초) → 점수 가속
+  let stateTimer = null;
+  let rafId = null;
+  let lastT = 0;
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const fmt = n => String(Math.floor(n)).padStart(3, '0');
+
+  function show(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  function setState(n) {
+    state = n;
+    layers.forEach((l, i) => l && l.classList.toggle('on', i === n));
+    screens.game.classList.toggle('st3', n === 3);
+
+    // 상태3 진입 순간, 이미 쓰다듬고 있으면 즉시 게임오버 (0.01초 룰)
+    if (n === 3 && holding) { gameOver(); return; }
+    scheduleNext();
+  }
+
+  // 상태2가 오는 박자는 일정하지 않고 불규칙하다
+  function scheduleNext() {
+    clearTimeout(stateTimer);
+    let dur;
+    if (state === 1) {
+      // 짧은 페이크 구간이 섞여 리듬이 어긋난다
+      dur = Math.random() < 0.25 ? rand(0.4, 1.0) : rand(1.8, 4.6);
+      stateTimer = setTimeout(() => setState(2), dur * 1000);
+    } else if (state === 2) {
+      dur = rand(0.55, 1.5);
+      stateTimer = setTimeout(() => {
+        // 가끔씩 상태3으로 넘어간다
+        if (Math.random() < 0.45) setState(3);
+        else setState(1);
+      }, dur * 1000);
+    } else { // state 3
+      dur = rand(0.9, 1.7);
+      stateTimer = setTimeout(() => setState(1), dur * 1000);
+    }
+  }
+
+  // ── 점수 루프 : 상태1에서 유지할수록 가속 누적 ──
+  function loop(t) {
+    const dt = Math.min((t - lastT) / 1000, 0.1);
+    lastT = t;
+    if (phase === 'play') {
+      if (holding && state === 1) {
+        holdStreak += dt;
+        const rate = 100 * (1 + Math.min(holdStreak, 5) * 0.25); // 최대 2.25배
+        score += rate * dt;
+        scoreGameEl.textContent = fmt(score);
+      } else if (!holding) {
+        holdStreak = 0;
+      }
+      mouse1Img.classList.toggle('petting', holding && state === 1);
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // ── 입력 (클릭 + 스페이스) ──
+  function press() {
+    if (holding) return;
+    holding = true;
+    cursorImg.src = 'assets/hand2.svg';
+    // 상태3에서 0.01초라도 쓰다듬으면 즉시 표호 → 게임오버
+    if (phase === 'play' && state === 3) gameOver();
+  }
+  function release() {
+    holding = false;
+    cursorImg.src = 'assets/hand1.svg';
+  }
+
+  let hasPointer = false; // 포인터 위치를 한 번이라도 받았는지 (터치 기기는 hover가 없다)
+  function moveCursor(x, y) {
+    hasPointer = true;
+    cursorEl.style.left = x + 'px';
+    cursorEl.style.top  = y + 'px';
+  }
+  addEventListener('pointerdown', e => {
+    moveCursor(e.clientX, e.clientY); // 터치는 누른 지점에서 커서 표시
+    if (phase === 'play') { e.preventDefault(); press(); }
+  });
+  addEventListener('pointerup', release);
+  addEventListener('pointercancel', release);
+  addEventListener('blur', release);
+  addEventListener('keydown', e => {
+    if (e.code !== 'Space' || e.repeat) return;
+    e.preventDefault();
+    if (phase === 'play') press();
+  });
+  addEventListener('keyup', e => { if (e.code === 'Space') release(); });
+  addEventListener('contextmenu', e => { if (phase === 'play') e.preventDefault(); });
+
+  // 커서 추적 — Start를 누르면 커서가 hand1로 바뀐다
+  addEventListener('pointermove', e => moveCursor(e.clientX, e.clientY));
+
+  // ── 진행 ──
+  function startGame() {
+    phase = 'play';
+    score = 0; holdStreak = 0; holding = false;
+    scoreGameEl.textContent = '000';
+    cursorImg.src = 'assets/hand1.svg';
+    cursorEl.style.display = 'block';
+    if (!hasPointer) moveCursor(innerWidth / 2, innerHeight / 2); // 첫 입력 전에도 화면 중앙에 보이게
+    document.body.classList.add('playing');
+    show('game');
+    setState(1);
+  }
+
+  function gameOver() {
+    if (phase !== 'play') return;
+    phase = 'over';
+    clearTimeout(stateTimer);
+    release();
+    document.body.classList.remove('playing');
+    cursorEl.style.display = 'none';
+
+    const final = Math.floor(score);
+    const best = Number(localStorage.getItem(BEST_KEY) || 0);
+    if (final > best) localStorage.setItem(BEST_KEY, final);
+    scoreOverEl.textContent = fmt(final);
+
+    // 표호: 화면 흔들림 후 게임오버 화면
+    wrap.classList.add('shake');
+    setTimeout(() => {
+      wrap.classList.remove('shake');
+      show('over');
+    }, 420);
+  }
+
+  document.getElementById('btn-start').addEventListener('click', startGame);
+  document.getElementById('btn-retry').addEventListener('click', startGame);
+
+  // ── 대시보드 / 공유 ──
+  const dash = document.getElementById('dash');
+  document.querySelectorAll('[data-act="dash"]').forEach(b => b.addEventListener('click', () => {
+    document.getElementById('best-score').textContent = fmt(Number(localStorage.getItem(BEST_KEY) || 0));
+    dash.classList.add('open');
+  }));
+  document.getElementById('btn-dash-close').addEventListener('click', () => dash.classList.remove('open'));
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 1800);
+  }
+  document.querySelectorAll('[data-act="share"]').forEach(b => b.addEventListener('click', async () => {
+    const best = Number(localStorage.getItem(BEST_KEY) || 0);
+    const text = `Don't 땃쥐 me — 내 점수 ${fmt(Math.floor(score))}점 (최고 ${fmt(best)}점) 🐭`;
+    try { await navigator.clipboard.writeText(text); toast('점수를 클립보드에 복사했어요!'); }
+    catch { toast(text); }
+  }));
+
+  requestAnimationFrame(t => { lastT = t; loop(t); });
+
+  // 개발 확인용: ?debug=game1|game2|game3|over 로 특정 화면 강제 표시
+  const dbg = new URLSearchParams(location.search).get('debug');
+  if (dbg) {
+    if (dbg.startsWith('game')) {
+      show('game');
+      const n = Number(dbg.slice(4)) || 1;
+      layers.forEach((l, i) => l && l.classList.toggle('on', i === n));
+      screens.game.classList.toggle('st3', n === 3);
+    } else if (dbg === 'over') { show('over'); }
+  }
+})();
+</script>
+</body>
+</html>
