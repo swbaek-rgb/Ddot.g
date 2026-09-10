@@ -302,11 +302,27 @@
   const btnNick   = document.getElementById('btn-nick');
   const boardEl   = document.getElementById('board');
 
+  // ── Supabase 공용 랭킹 (실패 시 이 기기의 localStorage 기록으로 동작) ──
+  const SB_URL = 'https://rejbmvzkgyiqwfvnjiwr.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlamJtdnprZ3lpcXdmdm5qaXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMjY5MjAsImV4cCI6MjEwNDYwMjkyMH0.D7u_VADNKsWBea4kkraYprnBaqIv4F_sqI_CnSJ5SS4';
+  const SB_HEADERS = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+
+  async function fetchBoardRemote() {
+    const res = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&order=score.desc,created_at.asc&limit=8`,
+      { headers: SB_HEADERS });
+    if (!res.ok) throw new Error('board fetch ' + res.status);
+    return res.json();
+  }
+  async function submitScoreRemote(name, pts) {
+    const res = await fetch(`${SB_URL}/rest/v1/scores`,
+      { method: 'POST', headers: SB_HEADERS, body: JSON.stringify({ name, score: pts }) });
+    if (!res.ok) throw new Error('submit ' + res.status);
+  }
+
   const loadBoard = () => {
     try { return JSON.parse(localStorage.getItem(BOARD_KEY)) || []; } catch { return []; }
   };
-  function renderBoard() {
-    const board = loadBoard();
+  function drawBoard(board, offline) {
     boardEl.innerHTML = '';
     if (!board.length) {
       boardEl.innerHTML = '<li class="empty">아직 기록이 없어요</li>';
@@ -321,18 +337,36 @@
       li.append(rank, name, pts);
       boardEl.appendChild(li);
     });
+    if (offline) boardEl.insertAdjacentHTML('beforeend', '<li class="empty">(오프라인 — 이 기기의 기록만 표시)</li>');
   }
-  function registerRecord() {
+  async function renderBoard() {
+    boardEl.innerHTML = '<li class="empty">불러오는 중…</li>';
+    try {
+      drawBoard(await fetchBoardRemote(), false);
+    } catch {
+      drawBoard(loadBoard(), true);
+    }
+  }
+  async function registerRecord() {
     if (nickForm.classList.contains('done')) return;
-    const name = nickInput.value.trim() || '이름없는 땃쥐';
+    const name = (nickInput.value.trim() || '이름없는 땃쥐').slice(0, 8);
     localStorage.setItem(NICK_KEY, name);
+    const pts = Math.floor(score);
+    // 이 기기 기록은 항상 보관 (오프라인 fallback용)
     const board = loadBoard();
-    board.push({ name, score: Math.floor(score) });
+    board.push({ name, score: pts });
     board.sort((a, b) => b.score - a.score);
-    localStorage.setItem(BOARD_KEY, JSON.stringify(board.slice(0, 8))); // 상위 8개만 보관
+    localStorage.setItem(BOARD_KEY, JSON.stringify(board.slice(0, 8)));
     nickForm.classList.add('done');
-    btnNick.textContent = '등록 완료!';
+    btnNick.textContent = '등록 중…';
     nickInput.blur();
+    try {
+      await submitScoreRemote(name, pts);
+      btnNick.textContent = '등록 완료!';
+    } catch {
+      btnNick.textContent = '등록 완료!';
+      toast('서버 연결 실패 — 이 기기에만 저장됐어요');
+    }
     renderBoard();
     dash.classList.add('open');
   }
