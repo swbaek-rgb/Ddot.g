@@ -261,8 +261,12 @@
   let stateTimer = null;
   let rafId = null;
   let lastT = 0;
+  let playStart = 0;        // 난이도 계산용: 이번 판 시작 시각
 
   const rand = (a, b) => a + Math.random() * (b - a);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  // 0(시작) → 1(최고 난이도). 90초에 걸쳐 점점 어려워진다.
+  const difficulty = () => phase === 'play' ? Math.min(1, (performance.now() - playStart) / 90000) : 0;
   const fmt = n => String(Math.floor(n)).padStart(3, '0');
 
   function show(name) {
@@ -280,19 +284,23 @@
     scheduleNext();
   }
 
-  // 상태2가 오는 박자는 일정하지 않고 불규칙하다
+  // 상태2가 오는 박자는 일정하지 않고 불규칙하다. 시간이 지날수록 점점 어려워진다.
   function scheduleNext() {
     clearTimeout(stateTimer);
+    const d = difficulty();
     let dur;
     if (state === 1) {
-      // 짧은 페이크 구간이 섞여 리듬이 어긋난다
-      dur = Math.random() < 0.25 ? rand(0.4, 1.0) : rand(1.8, 4.6);
+      // 짧은 페이크 구간이 섞여 리듬이 어긋난다 — 난이도가 오르면 페이크가 잦아진다
+      dur = Math.random() < lerp(0.25, 0.4, d)
+        ? rand(0.4, 1.0)
+        : rand(lerp(1.8, 0.9, d), lerp(4.6, 2.2, d));
       stateTimer = setTimeout(() => setState(2), dur * 1000);
     } else if (state === 2) {
-      dur = rand(0.55, 1.5);
+      // 경고 시간이 점점 짧아진다
+      dur = rand(lerp(0.55, 0.3, d), lerp(1.5, 0.8, d));
       stateTimer = setTimeout(() => {
-        // 가끔씩 상태3으로 넘어간다
-        if (Math.random() < 0.45) setState(3);
+        // 상태3으로 넘어갈 확률이 점점 오른다
+        if (Math.random() < lerp(0.45, 0.7, d)) setState(3);
         else setState(1);
       }, dur * 1000);
     } else { // state 3
@@ -306,9 +314,10 @@
     const dt = Math.min((t - lastT) / 1000, 0.1);
     lastT = t;
     if (phase === 'play') {
-      if (holding && state === 1) {
+      if (holding && state !== 3) {
         holdStreak += dt;
-        const rate = 100 * (1 + Math.min(holdStreak, 5) * 0.25); // 최대 2.25배
+        let rate = 100 * (1 + Math.min(holdStreak, 5) * 0.25); // 최대 2.25배
+        if (state === 2) rate *= 2.5; // 위험을 무릅쓴 쓰다듬기는 보너스
         score += rate * dt;
         scoreGameEl.textContent = fmt(score);
       } else if (!holding) {
@@ -359,6 +368,7 @@
   // ── 진행 ──
   function startGame() {
     phase = 'play';
+    playStart = performance.now();
     score = 0; holdStreak = 0; holding = false;
     scoreGameEl.textContent = '000';
     cursorImg.src = 'assets/hand1.svg';
@@ -406,11 +416,18 @@
     toastEl.classList.add('show');
     setTimeout(() => toastEl.classList.remove('show'), 1800);
   }
+  const GAME_URL = 'https://swbaek-rgb.github.io/Ddot.g/';
   document.querySelectorAll('[data-act="share"]').forEach(b => b.addEventListener('click', async () => {
     const best = Number(localStorage.getItem(BEST_KEY) || 0);
-    const text = `Don't 땃쥐 me — 내 점수 ${fmt(Math.floor(score))}점 (최고 ${fmt(best)}점) 🐭`;
-    try { await navigator.clipboard.writeText(text); toast('점수를 클립보드에 복사했어요!'); }
-    catch { toast(text); }
+    const text = phase === 'over'
+      ? `Don't 땃쥐 me — 내 점수 ${fmt(Math.floor(score))}점 (최고 ${fmt(best)}점) 🐭 너도 땃쥐 쓰다듬어봐!`
+      : `Don't 땃쥐 me — 땃쥐 쓰다듬기 게임 🐭`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Don't 땃쥐 me", text, url: GAME_URL }); } catch {} // 취소해도 조용히 넘어간다
+    } else {
+      try { await navigator.clipboard.writeText(`${text}\n${GAME_URL}`); toast('게임 링크를 클립보드에 복사했어요!'); }
+      catch { toast(GAME_URL); }
+    }
   }));
 
   requestAnimationFrame(t => { lastT = t; loop(t); });
