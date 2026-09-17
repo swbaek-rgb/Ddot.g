@@ -39,6 +39,33 @@
   .screen.active { display: block; }
   .abs { position: absolute; }
 
+  /* ── 가로(1440×1024) 레이아웃 좌표 ── */
+  #st-bubble   { left: 125px;    top: 38.2px;  width: 777px; }
+  #st-dont     { left: 366.9px;  top: 201.7px; width: 307px; }
+  #st-ttatjwi  { left: 303.7px;  top: 384px;   width: 304px; }
+  #st-me       { left: 514.2px;  top: 575.1px; width: 172px; }
+  #st-mouse    { left: 626.8px;  top: 166.8px; width: 590px; }
+  #btn-start   { left: 520px;    top: 722.5px; width: 178px; height: 101px; }
+  #st-dash     { left: 432px;    top: 841.5px; width: 164px; height: 80px; }
+  #st-share    { left: 627px;    top: 841.5px; width: 164px; height: 80px; }
+
+  #mouse1-img  { left: 380.5px;  top: 162.5px; width: 642px; }
+  #mouse2-img  { left: 338.1px;  top: 177.1px; width: 654px; }
+  #mouse3-img  { left: 88.8px;   top: 82.6px;  width: 1352px; }
+  #caption1    { top: 902px; }
+
+  #ov-bubble   { left: 30px;     top: 65.7px;  width: 777px; }
+  #ov-dont     { left: 271.9px;  top: 229.2px; width: 307px; }
+  #ov-ttatjwi  { left: 208.7px;  top: 411.5px; width: 304px; }
+  #ov-me       { left: 419.2px;  top: 602.5px; width: 172px; }
+  #ov-mouse    { left: 531.8px;  top: 194.3px; width: 590px; }
+  #ov-gameover { left: 1072.4px; top: 74.1px;  width: 292px; }
+  #btn-retry   { left: 1140px;   top: 347px;   width: 228px; height: 101px; }
+  #ov-dash     { left: 1204px;   top: 464px;   width: 164px; height: 80px; }
+  #ov-share    { left: 1204px;   top: 560px;   width: 164px; height: 80px; }
+  #nick-form   { left: 1140px;   top: 668px;   width: 228px; }
+  #ov-msg      { top: 916px; left: auto; right: 72px; width: 621px; }
+
   /* ── 배경 (Figma 프레임 페인트 그대로) ── */
   #screen-start    { background: linear-gradient(180deg, #888888 0%, #1A1818 100%); }
   #screen-game     { background: linear-gradient(180deg, #888888 0%, #B1B1B1 100%); }
@@ -169,19 +196,42 @@
   }
   #toast.show { opacity: 1; }
 
-  /* ── 모바일: 세로로 들면 회전 안내 ── */
-  #rotate {
-    position: fixed; inset: 0; z-index: 200; display: none;
-    background: #1A1818; color: #fff;
-    flex-direction: column; align-items: center; justify-content: center;
-    gap: 18px; text-align: center;
-  }
-  #rotate .phone { font-size: 64px; animation: tilt 1.6s ease-in-out infinite; }
-  @keyframes tilt { 0%,20% { transform: rotate(0deg); } 60%,100% { transform: rotate(90deg); } }
-  #rotate p { font-size: 20px; line-height: 1.6; }
-  @media (orientation: portrait) and (pointer: coarse) {
-    #rotate { display: flex; }
-  }
+  /* ══ 세로(720×1280) 레이아웃 — body.portrait 일 때 적용 ══ */
+  body.portrait #st-bubble   { left: 25px;  top: 50px;  width: 600px; }
+  body.portrait #st-dont     { left: 212px; top: 176px; width: 237px; }
+  body.portrait #st-ttatjwi  { left: 163px; top: 317px; width: 235px; }
+  body.portrait #st-me       { left: 326px; top: 464px; width: 133px; }
+  body.portrait #st-mouse    { left: 290px; top: 560px; width: 400px; }
+  body.portrait #btn-start   { left: 271px; top: 1010px; width: 178px; height: 90px; }
+  body.portrait #st-dash     { left: 181px; top: 1128px; width: 164px; height: 76px; }
+  body.portrait #st-share    { left: 375px; top: 1128px; width: 164px; height: 76px; }
+
+  body.portrait .score       { left: 40px; top: 36px; font-size: 92px; }
+  body.portrait #mouse1-img  { left: 60px;   top: 330px; width: 600px; }
+  body.portrait #mouse2-img  { left: 55px;   top: 330px; width: 600px; }
+  body.portrait #mouse3-img  { left: -435px; top: 0;  width: 1837px; } /* 세로 풀블리드 크롭 */
+  body.portrait #caption1    { top: 1150px; }
+  body.portrait .caption     { font-size: 27px; }
+  body.portrait .danger-box  { left: 302px; top: 1064px; }
+
+  body.portrait #ov-gameover { left: 400px; top: 40px;  width: 280px; }
+  body.portrait #ov-bubble   { left: 20px;  top: 250px; width: 450px; }
+  body.portrait #ov-dont     { left: 160px; top: 345px; width: 178px; }
+  body.portrait #ov-ttatjwi  { left: 124px; top: 450px; width: 176px; }
+  body.portrait #ov-me       { left: 245px; top: 561px; width: 100px; }
+  body.portrait #ov-mouse    { left: 360px; top: 500px; width: 330px; }
+  body.portrait #ov-msg      { top: 905px; left: 0; right: 0; width: auto; font-size: 25px; }
+  body.portrait #nick-form   { left: 180px; top: 962px; width: 360px; }
+  body.portrait #nick-form input  { height: 52px; }
+  body.portrait #nick-form .btn   { height: 52px !important; margin-top: 8px !important; }
+  body.portrait #btn-retry   { left: 96px;  top: 1130px; width: 180px; height: 76px; font-size: 32px; }
+  body.portrait #ov-dash     { left: 296px; top: 1130px; width: 150px; height: 76px; }
+  body.portrait #ov-share    { left: 466px; top: 1130px; width: 150px; height: 76px; }
+
+  body.portrait .float-pt        { font-size: 24px; }
+  body.portrait .float-pt.bonus  { font-size: 30px; }
+  body.portrait #dash .panel     { padding: 40px 44px; }
+  body.portrait #board           { min-width: 320px; }
 </style>
 </head>
 <body>
@@ -189,33 +239,33 @@
 
   <!-- ══ 시작화면 ══ -->
   <section id="screen-start" class="screen active">
-    <img class="abs" src="assets/bubble.svg"      style="left:125px;   top:38.2px;  width:777px;">
-    <img class="abs" src="assets/txt-dont.svg"    style="left:366.9px; top:201.7px; width:307px;">
-    <img class="abs" src="assets/txt-ttatjwi.svg" style="left:303.7px; top:384px;   width:304px;">
-    <img class="abs" src="assets/txt-me.svg"      style="left:514.2px; top:575.1px; width:172px;">
-    <img class="abs" src="assets/mouse-start.svg" style="left:626.8px; top:166.8px; width:590px;">
-    <div class="btn btn-lg" id="btn-start" style="left:520px; top:722.5px; width:178px; height:101px;">Start</div>
-    <div class="btn btn-sm" data-act="dash"  style="left:432px; top:841.5px; width:164px; height:80px;">대시보드</div>
-    <div class="btn btn-sm" data-act="share" style="left:627px; top:841.5px; width:164px; height:80px;">공유하기</div>
+    <img class="abs" id="st-bubble"  src="assets/bubble.svg">
+    <img class="abs" id="st-dont"    src="assets/txt-dont.svg">
+    <img class="abs" id="st-ttatjwi" src="assets/txt-ttatjwi.svg">
+    <img class="abs" id="st-me"      src="assets/txt-me.svg">
+    <img class="abs" id="st-mouse"   src="assets/mouse-start.svg">
+    <div class="btn btn-lg" id="btn-start">Start</div>
+    <div class="btn btn-sm" id="st-dash"  data-act="dash">대시보드</div>
+    <div class="btn btn-sm" id="st-share" data-act="share">공유하기</div>
   </section>
 
   <!-- ══ 게임화면 ══ -->
   <section id="screen-game" class="screen">
     <!-- 상태1 : 한눈팔기 -->
     <div class="state-layer on" id="layer-1">
-      <img id="mouse1-img" class="abs" src="assets/mouse-state1.svg" style="left:380.5px; top:162.5px; width:642px;">
-      <div class="caption" style="top:902px;">스페이스바 또는 클릭으로 땃쥐를 쓰다듬자.</div>
+      <img id="mouse1-img" class="abs" src="assets/mouse-state1.svg">
+      <div class="caption" id="caption1">스페이스바 또는 클릭으로 땃쥐를 쓰다듬자.</div>
     </div>
     <!-- 상태2 : 고개 돌림 -->
     <div class="state-layer" id="layer-2">
       <div class="vignette vig-1825"></div>
-      <img class="abs" src="assets/mouse-state2.svg" style="left:338.1px; top:177.1px; width:654px;">
+      <img id="mouse2-img" class="abs" src="assets/mouse-state2.svg">
       <div class="danger-box">위험!!</div>
     </div>
     <!-- 상태3 : 폭발 직전 -->
     <div class="state-layer" id="layer-3">
       <div class="vignette vig-2442"></div>
-      <img class="abs" src="assets/mouse-state3.svg" style="left:88.8px; top:82.6px; width:1352px;">
+      <img id="mouse3-img" class="abs" src="assets/mouse-state3.svg">
     </div>
     <div class="score" id="score-game">000</div>
   </section>
@@ -223,22 +273,22 @@
   <!-- ══ 게임오버 ══ -->
   <section id="screen-over" class="screen">
     <div class="vignette vig-1825"></div>
-    <img class="abs" src="assets/bubble.svg"      style="left:30px;    top:65.7px;  width:777px;">
-    <img class="abs" src="assets/txt-dont.svg"    style="left:271.9px; top:229.2px; width:307px;">
-    <img class="abs" src="assets/txt-ttatjwi.svg" style="left:208.7px; top:411.5px; width:304px;">
-    <img class="abs" src="assets/txt-me.svg"      style="left:419.2px; top:602.5px; width:172px;">
-    <img class="abs" src="assets/mouse-start.svg" style="left:531.8px; top:194.3px; width:590px;">
-    <img class="abs" src="assets/txt-gameover.svg" style="left:1072.4px; top:74.1px; width:292px;">
-    <div class="btn btn-lg" id="btn-retry" style="left:1140px; top:347px; width:228px; height:101px;">다시시작</div>
-    <div class="btn btn-sm" data-act="dash"  style="left:1204px; top:464px; width:164px; height:80px;">대시보드</div>
-    <div class="btn btn-sm" data-act="share" style="left:1204px; top:560px; width:164px; height:80px;">공유하기</div>
+    <img class="abs" id="ov-bubble"   src="assets/bubble.svg">
+    <img class="abs" id="ov-dont"     src="assets/txt-dont.svg">
+    <img class="abs" id="ov-ttatjwi"  src="assets/txt-ttatjwi.svg">
+    <img class="abs" id="ov-me"       src="assets/txt-me.svg">
+    <img class="abs" id="ov-mouse"    src="assets/mouse-start.svg">
+    <img class="abs" id="ov-gameover" src="assets/txt-gameover.svg">
+    <div class="btn btn-lg" id="btn-retry">다시시작</div>
+    <div class="btn btn-sm" id="ov-dash"  data-act="dash">대시보드</div>
+    <div class="btn btn-sm" id="ov-share" data-act="share">공유하기</div>
     <!-- 닉네임 기록 등록 -->
-    <div class="abs" id="nick-form" style="left:1140px; top:668px; width:228px;">
+    <div class="abs" id="nick-form">
       <input id="nick-input" maxlength="8" placeholder="닉네임" autocomplete="off">
       <div class="btn btn-sm" id="btn-nick" style="position:relative; width:100%; height:56px; margin-top:10px;">기록 등록</div>
     </div>
     <div class="score" id="score-over">000</div>
-    <div class="caption" style="top:916px; left:auto; right:72px; width:621px; text-align:center;">땃쥐의 심기를 제대로 건드려버렸다...</div>
+    <div class="caption" id="ov-msg" style="text-align:center;">땃쥐의 심기를 제대로 건드려버렸다...</div>
   </section>
 
   <!-- 대시보드 오버레이 -->
@@ -256,21 +306,25 @@
 <!-- 커스텀 커서 -->
 <div id="cursor"><img id="cursor-img" src="assets/hand1.svg"></div>
 
-<!-- 세로 모드 안내 -->
-<div id="rotate">
-  <div class="phone">📱</div>
-  <p>가로 모드로 돌려서 플레이해 주세요!</p>
-</div>
 
 <script>
 (() => {
   'use strict';
 
-  // ── 화면 스케일링 (1440×1024 고정 캔버스) ──
+  // ── 화면 스케일링: 가로 1440×1024, 세로 720×1280 캔버스를 방향에 따라 전환 ──
   const wrap = document.getElementById('stage-wrap');
   function fit() {
-    const s = Math.min(innerWidth / 1440, innerHeight / 1024);
+    const portrait = innerHeight > innerWidth;
+    document.body.classList.toggle('portrait', portrait);
+    const W = portrait ? 720 : 1440;
+    const H = portrait ? 1280 : 1024;
+    wrap.style.width = W + 'px';
+    wrap.style.height = H + 'px';
+    const s = Math.min(innerWidth / W, innerHeight / H);
     wrap.style.transform = `translate(-50%, -50%) scale(${s})`;
+    // 커서는 화면(고정) 좌표라 스테이지 배율에 맞춰 크기만 조정
+    const c = document.getElementById('cursor');
+    if (c) c.style.width = Math.max(90, Math.round(190 * s)) + 'px';
   }
   addEventListener('resize', fit);
   addEventListener('orientationchange', () => setTimeout(fit, 150));
