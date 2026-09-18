@@ -482,8 +482,14 @@
   async function fetchBoardRemote(m) {
     const res = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&mode=eq.${m}&order=score.desc,created_at.asc&limit=8`,
       { headers: SB_HEADERS });
-    if (!res.ok) throw new Error('board fetch ' + res.status);
-    return res.json();
+    if (res.ok) return res.json();
+    // mode 컬럼 마이그레이션 전 호환: 기존 기록은 전부 일반 모드
+    if (m === 'normal') {
+      const legacy = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&order=score.desc,created_at.asc&limit=8`,
+        { headers: SB_HEADERS });
+      if (legacy.ok) return legacy.json();
+    }
+    throw new Error('board fetch ' + res.status);
   }
   async function submitScoreRemote(name, pts, m) {
     const res = await fetch(`${SB_URL}/rest/v1/scores`,
