@@ -622,7 +622,7 @@
     el.innerHTML = '<img src="assets/mealworm.svg">';
     el.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); eatSnack(el); });
     screens.game.appendChild(el);
-    el._life = setTimeout(() => { removeSnack(); scheduleSnack(rand(5000, 7000)); }, rand(1800, 2800));
+    el._life = setTimeout(() => { removeSnack(); scheduleSnack(rand(7000, 10000)); }, rand(1800, 2800));
   }
   function scheduleSnack(delay) {
     clearTimeout(snackTimer);
@@ -637,7 +637,7 @@
     clearTimeout(el._life);
     el.remove();
     startEating();
-    scheduleSnack(rand(6000, 9000));
+    scheduleSnack(rand(9000, 13000));
   }
   function startEating() {
     eating = true;
@@ -820,7 +820,7 @@
     timerEl.textContent = TA_TIME;
     if (mode === 'timeattack') {
       deadline = performance.now() + TA_TIME * 1000;
-      scheduleSnack(3000);
+      scheduleSnack(rand(4000, 6000));
     }
     cursorImg.src = 'assets/hand1.svg';
     cursorEl.style.display = 'block';
