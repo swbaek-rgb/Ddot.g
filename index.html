@@ -647,7 +647,7 @@
     clearTimeout(snackTimer);
     snackTimer = setTimeout(() => {
       if (phase !== 'play' || mode !== 'timeattack') return;
-      if (eating) { scheduleSnack(1500); return; }
+      if (eating || state === 3) { scheduleSnack(1500); return; } // 식사 중이거나 뒤돌아본 때는 나오지 않는다
       spawnSnack();
     }, delay);
   }
