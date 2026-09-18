@@ -180,33 +180,40 @@
   #cursor img { width: 100%; display: block; }
   body.playing, body.playing * { cursor: none !important; }
 
-  /* ── 모드 고르기 오버레이 ── */
+  /* ── 모드 고르기 오버레이 (Figma 156:156) ── */
   #mode {
     position: absolute; inset: 0; z-index: 40; display: none;
-    background: rgba(0, 0, 0, .45);
-    -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
+    background: rgba(17, 17, 17, .1);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   }
   #mode.open { display: block; }
-  .mode-card {
-    position: absolute; width: 549px; height: 745px;
-    border: 3px solid #111; border-radius: 24px;
-    background: linear-gradient(180deg, #EAEAEA 0%, #C6C6C6 100%);
-    overflow: hidden;
-  }
+  .mode-slot { position: absolute; width: 549px; height: 745px; }
   #mode-normal     { left: 115px; top: 136px; }
   #mode-timeattack { left: 720px; top: 136px; }
-  .mode-card .burst { left: -52.5px; top: -18.7px; width: 593px; }
+  .mode-card {
+    position: absolute; inset: 0;
+    border: 4px solid #000; border-radius: 16px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #B5B5B5 100%);
+  }
+  /* 말풍선: 카드 밖으로 삐져나온다 (미회전 벡터를 -15° 회전) */
+  .burst-box { position: absolute; width: 635.6px; height: 407.5px; transform: rotate(-15deg); pointer-events: none; }
+  #mode-normal     .burst-box { left: -82.4px; top: 6.5px; }
+  #mode-timeattack .burst-box { left: -78.4px; top: 10.5px; }
+  .burst-box img { width: 100%; height: 100%; display: block; }
+  .mode-title { position: absolute; pointer-events: none; }
   #mn-title  { left: 157.9px; top: 145.1px; width: 231px; }
   #mt-title  { left: 120.1px; top: 138.1px; width: 328px; }
-  #mt-clocks { left: 0; top: 18px; width: 549px; }
+  /* 시계 패턴: 카드보다 크고 카드 모서리에 맞춰 잘린다 */
+  .clock-clip { position: absolute; inset: 0; border-radius: 12px; overflow: hidden; }
+  #mt-clocks { position: absolute; left: -36.5px; top: 14.2px; width: 679.8px; height: 753px; }
   .mode-desc {
-    position: absolute; left: 40px; right: 40px; top: 433px;
-    text-align: center; font-size: 31px; line-height: 1.55; color: #111;
+    position: absolute; left: 50%; transform: translateX(-50%); width: 413px; top: 429px;
+    text-align: center; font-size: 38px; line-height: 1.3; color: #1A1818;
   }
-  #mode-timeattack .mode-desc { top: 391px; }
-  .mode-start { left: 166px; top: 583px; width: 218px; height: 101px; }
+  #mode-timeattack .mode-desc { top: 387px; }
+  .mode-start { left: 166px; top: 579px; width: 218px; height: 101px; border-width: 4px; }
 
-  body.portrait .mode-card { transform: scale(0.72); transform-origin: top left; }
+  body.portrait .mode-slot { transform: scale(0.72); transform-origin: top left; }
   body.portrait #mode-normal     { left: 162px; top: 60px; }
   body.portrait #mode-timeattack { left: 162px; top: 645px; }
 
@@ -220,7 +227,15 @@
     background: #fff; border: 4px solid #111; border-radius: 24px;
     padding: 56px 88px; text-align: center;
   }
-  #dash h2 { font-size: 44px; margin-bottom: 24px; }
+  #dash h2 { font-size: 44px; margin-bottom: 20px; }
+
+  /* 순위표 모드 탭 */
+  #board-tabs { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+  .board-tab {
+    padding: 10px 26px; border: 3px solid #111; border-radius: 999px;
+    font-size: 22px; font-weight: 700; color: #111; cursor: pointer; user-select: none;
+  }
+  .board-tab.active { background: #111; color: #fff; }
 
   /* ── 순위표: 상위 8명, 1위는 크게 강조 ── */
   #board { list-style: none; min-width: 380px; margin-bottom: 32px; }
@@ -358,17 +373,18 @@
 
   <!-- 모드 고르기 오버레이 -->
   <div id="mode">
-    <div class="mode-card" id="mode-normal">
-      <img class="abs burst" src="assets/mode-burst.svg">
-      <img class="abs" id="mn-title" src="assets/txt-mode-normal.svg">
-      <div class="mode-desc">아이템과 시간제한이<br>없는 순수 실력 경쟁.</div>
+    <div class="mode-slot" id="mode-normal">
+      <div class="mode-card"></div>
+      <div class="burst-box"><img src="assets/mode-burst.svg"></div>
+      <img class="mode-title" id="mn-title" src="assets/txt-mode-normal.svg">
+      <div class="mode-desc">아이템과 시간제한이 없는 순수 실력 경쟁.</div>
       <div class="btn btn-lg mode-start" data-mode="normal">Start</div>
     </div>
-    <div class="mode-card" id="mode-timeattack">
-      <img class="abs" id="mt-clocks" src="assets/mode-clocks.svg">
-      <img class="abs burst" src="assets/mode-burst.svg">
-      <img class="abs" id="mt-title" src="assets/txt-mode-timeattack.svg">
-      <div class="mode-desc">정해진 시간 안에 많은<br>점수 내기. 간식을 던져<br>시간을 끌자!</div>
+    <div class="mode-slot" id="mode-timeattack">
+      <div class="mode-card"><div class="clock-clip"><img id="mt-clocks" src="assets/mode-clocks.svg"></div></div>
+      <div class="burst-box"><img src="assets/mode-burst.svg"></div>
+      <img class="mode-title" id="mt-title" src="assets/txt-mode-timeattack.svg">
+      <div class="mode-desc">정해진 시간 안에 많은 점수 내기. 간식을 던져 시간을 끌자!</div>
       <div class="btn btn-lg mode-start" data-mode="timeattack">Start</div>
     </div>
   </div>
@@ -377,6 +393,10 @@
   <div id="dash">
     <div class="panel">
       <h2>순위표</h2>
+      <div id="board-tabs">
+        <div class="board-tab active" data-board="normal">일반 모드</div>
+        <div class="board-tab" data-board="timeattack">타임어택!</div>
+      </div>
       <ol id="board"></ol>
       <div class="btn btn-sm" style="position:relative; width:164px; height:64px; margin:0 auto;" id="btn-dash-close">닫기</div>
     </div>
@@ -443,20 +463,23 @@
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlamJtdnprZ3lpcXdmdm5qaXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMjY5MjAsImV4cCI6MjEwNDYwMjkyMH0.D7u_VADNKsWBea4kkraYprnBaqIv4F_sqI_CnSJ5SS4';
   const SB_HEADERS = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
 
-  async function fetchBoardRemote() {
-    const res = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&order=score.desc,created_at.asc&limit=8`,
+  let boardMode = 'normal'; // 대시보드에서 보고 있는 모드 탭
+  const boardKey = m => m === 'timeattack' ? BOARD_KEY + '-ta' : BOARD_KEY;
+
+  async function fetchBoardRemote(m) {
+    const res = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&mode=eq.${m}&order=score.desc,created_at.asc&limit=8`,
       { headers: SB_HEADERS });
     if (!res.ok) throw new Error('board fetch ' + res.status);
     return res.json();
   }
-  async function submitScoreRemote(name, pts) {
+  async function submitScoreRemote(name, pts, m) {
     const res = await fetch(`${SB_URL}/rest/v1/scores`,
-      { method: 'POST', headers: SB_HEADERS, body: JSON.stringify({ name, score: pts }) });
+      { method: 'POST', headers: SB_HEADERS, body: JSON.stringify({ name, score: pts, mode: m }) });
     if (!res.ok) throw new Error('submit ' + res.status);
   }
 
-  const loadBoard = () => {
-    try { return JSON.parse(localStorage.getItem(BOARD_KEY)) || []; } catch { return []; }
+  const loadBoard = m => {
+    try { return JSON.parse(localStorage.getItem(boardKey(m))) || []; } catch { return []; }
   };
   function drawBoard(board, offline) {
     boardEl.innerHTML = '';
@@ -475,12 +498,19 @@
     });
     if (offline) boardEl.insertAdjacentHTML('beforeend', '<li class="empty">(오프라인 — 이 기기의 기록만 표시)</li>');
   }
+  function syncBoardTabs() {
+    document.querySelectorAll('.board-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.board === boardMode));
+  }
   async function renderBoard() {
+    syncBoardTabs();
+    const m = boardMode;
     boardEl.innerHTML = '<li class="empty">불러오는 중…</li>';
     try {
-      drawBoard(await fetchBoardRemote(), false);
+      const rows = await fetchBoardRemote(m);
+      if (boardMode === m) drawBoard(rows, false);
     } catch {
-      drawBoard(loadBoard(), true);
+      if (boardMode === m) drawBoard(loadBoard(m), true);
     }
   }
   async function registerRecord() {
@@ -488,21 +518,23 @@
     const name = (nickInput.value.trim() || '이름없는 땃쥐').slice(0, 8);
     localStorage.setItem(NICK_KEY, name);
     const pts = Math.floor(score);
+    const m = mode;
     // 이 기기 기록은 항상 보관 (오프라인 fallback용)
-    const board = loadBoard();
+    const board = loadBoard(m);
     board.push({ name, score: pts });
     board.sort((a, b) => b.score - a.score);
-    localStorage.setItem(BOARD_KEY, JSON.stringify(board.slice(0, 8)));
+    localStorage.setItem(boardKey(m), JSON.stringify(board.slice(0, 8)));
     nickForm.classList.add('done');
     btnNick.textContent = '등록 중…';
     nickInput.blur();
     try {
-      await submitScoreRemote(name, pts);
+      await submitScoreRemote(name, pts, m);
       btnNick.textContent = '등록 완료!';
     } catch {
       btnNick.textContent = '등록 완료!';
       toast('서버 연결 실패 — 이 기기에만 저장됐어요');
     }
+    boardMode = m;
     renderBoard();
     dash.classList.add('open');
   }
@@ -830,8 +862,13 @@
   // ── 대시보드 / 공유 ──
   const dash = document.getElementById('dash');
   document.querySelectorAll('[data-act="dash"]').forEach(b => b.addEventListener('click', () => {
+    boardMode = mode; // 마지막으로 플레이한 모드 탭부터
     renderBoard();
     dash.classList.add('open');
+  }));
+  document.querySelectorAll('.board-tab').forEach(t => t.addEventListener('click', () => {
+    boardMode = t.dataset.board;
+    renderBoard();
   }));
   document.getElementById('btn-dash-close').addEventListener('click', () => dash.classList.remove('open'));
 
