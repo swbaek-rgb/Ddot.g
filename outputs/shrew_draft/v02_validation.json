@@ -1,0 +1,27 @@
+{
+  "Body + head \u2022 one continuous surface": {
+    "components": 1,
+    "nonmanifold_edges": 0,
+    "vertices": 408
+  },
+  "Hind.L \u2022 continuous leg & foot": {
+    "components": 1,
+    "nonmanifold_edges": 0,
+    "vertices": 6195
+  },
+  "Front.L \u2022 continuous leg & foot": {
+    "components": 1,
+    "nonmanifold_edges": 0,
+    "vertices": 5479
+  },
+  "Hind.R \u2022 continuous leg & foot": {
+    "components": 1,
+    "nonmanifold_edges": 0,
+    "vertices": 6192
+  },
+  "Front.R \u2022 continuous leg & foot": {
+    "components": 1,
+    "nonmanifold_edges": 0,
+    "vertices": 5480
+  }
+}

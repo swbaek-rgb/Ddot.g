@@ -151,6 +151,36 @@
   #cursor img { width: 100%; display: block; }
   body.playing, body.playing * { cursor: none !important; }
 
+  /* ── 모드 고르기 오버레이 ── */
+  #mode {
+    position: absolute; inset: 0; z-index: 40; display: none;
+    background: rgba(0, 0, 0, .45);
+    -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
+  }
+  #mode.open { display: block; }
+  .mode-card {
+    position: absolute; width: 549px; height: 745px;
+    border: 3px solid #111; border-radius: 24px;
+    background: linear-gradient(180deg, #EAEAEA 0%, #C6C6C6 100%);
+    overflow: hidden;
+  }
+  #mode-normal     { left: 115px; top: 136px; }
+  #mode-timeattack { left: 720px; top: 136px; }
+  .mode-card .burst { left: -52.5px; top: -18.7px; width: 593px; }
+  #mn-title  { left: 157.9px; top: 145.1px; width: 231px; }
+  #mt-title  { left: 120.1px; top: 138.1px; width: 328px; }
+  #mt-clocks { left: 0; top: 18px; width: 549px; }
+  .mode-desc {
+    position: absolute; left: 40px; right: 40px; top: 433px;
+    text-align: center; font-size: 31px; line-height: 1.55; color: #111;
+  }
+  #mode-timeattack .mode-desc { top: 391px; }
+  .mode-start { left: 166px; top: 583px; width: 218px; height: 101px; }
+
+  body.portrait .mode-card { transform: scale(0.72); transform-origin: top left; }
+  body.portrait #mode-normal     { left: 162px; top: 60px; }
+  body.portrait #mode-timeattack { left: 162px; top: 645px; }
+
   /* ── 대시보드 오버레이 ── */
   #dash {
     position: absolute; inset: 0; display: none; z-index: 50;
@@ -290,6 +320,23 @@
     <div class="score" id="score-over">000</div>
     <div class="caption" id="ov-msg" style="text-align:center;">땃쥐의 심기를 제대로 건드려버렸다...</div>
   </section>
+
+  <!-- 모드 고르기 오버레이 -->
+  <div id="mode">
+    <div class="mode-card" id="mode-normal">
+      <img class="abs burst" src="assets/mode-burst.svg">
+      <img class="abs" id="mn-title" src="assets/txt-mode-normal.svg">
+      <div class="mode-desc">아이템과 시간제한이<br>없는 순수 실력 경쟁.</div>
+      <div class="btn btn-lg mode-start" data-mode="normal">Start</div>
+    </div>
+    <div class="mode-card" id="mode-timeattack">
+      <img class="abs" id="mt-clocks" src="assets/mode-clocks.svg">
+      <img class="abs burst" src="assets/mode-burst.svg">
+      <img class="abs" id="mt-title" src="assets/txt-mode-timeattack.svg">
+      <div class="mode-desc">정해진 시간 안에 많은<br>점수 내기. 간식을 던져<br>시간을 끌자!</div>
+      <div class="btn btn-lg mode-start" data-mode="timeattack">Start</div>
+    </div>
+  </div>
 
   <!-- 대시보드 오버레이 -->
   <div id="dash">
@@ -602,7 +649,15 @@
     }, 420);
   }
 
-  document.getElementById('btn-start').addEventListener('click', startGame);
+  // ── 모드 고르기: Start를 누르면 모드 선택이 뜬다 ──
+  const modeEl = document.getElementById('mode');
+  document.getElementById('btn-start').addEventListener('click', () => modeEl.classList.add('open'));
+  modeEl.addEventListener('click', e => { if (e.target === modeEl) modeEl.classList.remove('open'); }); // 바깥 누르면 닫기
+  document.querySelectorAll('.mode-start').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.mode === 'timeattack') { toast('타임어택! 모드는 준비 중이에요 🐛'); return; }
+    modeEl.classList.remove('open');
+    startGame();
+  }));
   document.getElementById('btn-retry').addEventListener('click', startGame);
 
   // ── 대시보드 / 공유 ──
@@ -646,6 +701,7 @@
       layers.forEach((l, i) => l && l.classList.toggle('on', i === n));
       screens.game.classList.toggle('st3', n === 3);
     } else if (dbg === 'over') { show('over'); }
+    else if (dbg === 'mode') { modeEl.classList.add('open'); }
   }
 })();
 </script>

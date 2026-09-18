@@ -1,0 +1,10 @@
+/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/create_shrew.py:24: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/create_shrew.py:166: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world=bpy.data.worlds.new('Studio world'); scene.world.use_nodes=True
+00:14.216  render           | Saved: '/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_draft_v01.png'
+Info: Saved as "shrew_draft_v01.blend"
+SHREW_DRAFT_COMPLETE 36
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:31:22)
+
+Blender quit

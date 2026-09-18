@@ -1,0 +1,28 @@
+{
+  "bones": 31,
+  "controls": 19,
+  "rest_error": {
+    "Body + head \u2022 one continuous surface": 1.1920928955078125e-07,
+    "Cylinder": 2.9236671252874658e-06,
+    "Cylinder.001": 4.126196017750772e-06,
+    "Ear.L \u2022 detailed shell": 2.192092097175191e-06,
+    "Eye.R": 7.539457556049456e-07,
+    "Tail \u2022 editable tapered curve": 6.094920763644041e-07
+  },
+  "ik_tests": {
+    "front.L": {
+      "foot_target_error": 2.3274454670726688e-05
+    },
+    "front.R": {
+      "foot_target_error": 2.3402756360291073e-05
+    },
+    "hind.L": {
+      "foot_target_error": 2.826009836508674e-05
+    },
+    "hind.R": {
+      "foot_target_error": 2.812532497670781e-05
+    }
+  },
+  "crouch_max_foot_error": 1.9107472605772675e-05,
+  "pose_test_render": "shrew_rig_v06_pose_test.png"
+}

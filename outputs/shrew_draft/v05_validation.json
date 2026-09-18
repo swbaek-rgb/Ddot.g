@@ -1,0 +1,36 @@
+{
+  "geometry_unchanged": true,
+  "geometry_signature": "c3ec84348d267b4e09d444c400691c27346aa08c9a390438ddfffdd609e61992",
+  "legs": {
+    "Cylinder": {
+      "base_vertices": 32,
+      "modifiers": [
+        "MIRROR"
+      ],
+      "material": "Legs & feet \u2022 textured brown"
+    },
+    "Cylinder.001": {
+      "base_vertices": 40,
+      "modifiers": [
+        "MIRROR"
+      ],
+      "material": "Legs & feet \u2022 textured brown"
+    }
+  },
+  "gradient_range_x": [
+    1.1,
+    2.08
+  ],
+  "head_body_base_color_linear": [
+    0.145,
+    0.058,
+    0.022,
+    1
+  ],
+  "nose_color_linear": [
+    0.021,
+    0.006,
+    0.0025,
+    1
+  ]
+}

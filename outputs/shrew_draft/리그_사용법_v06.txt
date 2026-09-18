@@ -1,0 +1,18 @@
+땃쥐 리그 v06
+
+SHREW_RIG 선택 → Pose Mode에서 조작합니다.
+ROOT: 캐릭터 전체 위치/회전
+BODY: 몸통 높이, 이동, 전체 몸통 기울기 (발은 IK 위치 유지)
+SPINE: 등과 가슴 기울기
+HEAD: 고개 숙이기, 좌우 보기
+FOOT_IK_front.L/R, FOOT_IK_hind.L/R: G로 발 이동, R로 발 방향
+KNEE_front/hind.L/R: 무릎/팔꿈치 굽힘 방향
+EAR.L/R: 양쪽 귀 회전
+TAIL.01~05: 꼬리 회전, 뿌리부터 끝 순서
+
+조작 예: 프레임 1에서 컨트롤 선택 후 I → Location & Rotation. 프레임 12로 이동하여 발을 G로 조금 들고, HEAD를 R로 돌린 뒤 다시 키프레임을 넣습니다.
+초기 자세: Pose Mode에서 컨트롤 전체 선택, Alt+G와 Alt+R (키프레임이 있는 경우 해당 프레임에서 다시 키를 넣어야 유지됩니다).
+
+다리는 기존 Subdivision/Mirror 결과를 동일한 모양의 변형용 메시로 고정하여 좌우 독립 IK에 연결했습니다. 원본 모델링 메시와 Mirror는 shrew_before_rig_v06.blend에 보존했습니다. 몸통과 귀의 Subdivision은 유지했습니다. 꼬리는 원래 Bezier curve와 제어점을 유지합니다.
+코 그라데이션과 표면 질감은 rest 좌표에 연결되어 머리 움직임을 따라갑니다.
+단순 캐릭터용 기본 리그이며 완성된 걷기 애니메이션은 아직 없습니다. 기본 자세로 저장되어 바로 키프레임 작업을 시작할 수 있습니다.

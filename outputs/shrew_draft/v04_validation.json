@@ -1,0 +1,30 @@
+{
+  "preserved_objects": [
+    "Body + head • one continuous surface",
+    "Camera • three-quarter",
+    "Camera • Top / Y-width check",
+    "Cylinder",
+    "Cylinder.001",
+    "Eye.R",
+    "Fill",
+    "Key",
+    "Photo reference • enable collection to view",
+    "Rim",
+    "Studio floor",
+    "Tail • editable tapered curve"
+  ],
+  "unchanged": true,
+  "removed_whiskers": [
+    "Whisker.L.1",
+    "Whisker.L.2",
+    "Whisker.L.3",
+    "Whisker.R.1",
+    "Whisker.R.2",
+    "Whisker.R.3"
+  ],
+  "new_bezier_whiskers": 10,
+  "user_legs": {
+    "Cylinder": 32,
+    "Cylinder.001": 40
+  }
+}
