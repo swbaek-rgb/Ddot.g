@@ -169,6 +169,10 @@
   body.portrait .eat-badge  { top: 1028px; }
   body.portrait #caption-eat { top: 1108px; }
 
+  /* 위험(상태2) 안내 */
+  #caption-danger { top: 972px; font-size: 30px; }
+  body.portrait #caption-danger { top: 1150px; font-size: 25px; }
+
   /* ── 득점 플로터: 쓰다듬는 곳 옆에 +00 이 떠올랐다 사라진다 ── */
   .float-pt {
     position: fixed; pointer-events: none; z-index: 98;
@@ -358,6 +362,7 @@
       <div class="vignette vig-1825"></div>
       <img id="mouse2-img" class="abs" src="assets/mouse-state2.svg">
       <div class="danger-box">위험!!</div>
+      <div class="caption" id="caption-danger">이때 쓰다듬으면 점수 2.5배! 하지만 언제 터질지 모른다...</div>
     </div>
     <!-- 상태3 : 폭발 직전 -->
     <div class="state-layer" id="layer-3">
