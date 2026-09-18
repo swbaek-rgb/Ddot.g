@@ -149,6 +149,9 @@
     position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
     margin-top: 6px; font-size: 28px; font-weight: 800; color: #111;
     white-space: nowrap; animation: blink .5s steps(2) infinite;
+    text-shadow:
+      -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff,
+      -2px 0 0 #fff, 2px 0 0 #fff, 0 -2px 0 #fff, 0 2px 0 #fff;
   }
   @keyframes snackPop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
   @keyframes snackWiggle { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
