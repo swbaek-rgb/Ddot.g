@@ -226,7 +226,14 @@
 
   body.portrait .mode-slot { transform: scale(0.72); transform-origin: top left; }
   body.portrait #mode-normal     { left: 162px; top: 60px; }
-  body.portrait #mode-timeattack { left: 162px; top: 645px; }
+  body.portrait #mode-timeattack { left: 162px; top: 684px; }
+  /* 세로에서는 카드를 좌우로 넓혀 상하/좌우 바깥 여백을 60px로 통일 (말풍선 크기는 유지) */
+  body.portrait .mode-card { left: -142.4px; right: -142.4px; }
+  body.portrait #mode-normal     .burst-box { left: -224.8px; }
+  body.portrait #mode-timeattack .burst-box { left: -220.8px; }
+  body.portrait #mn-title { left: 15.5px; }
+  body.portrait #mt-title { left: -22.3px; }
+  body.portrait #mt-clocks { width: 1033px; height: 1144px; }
 
   /* ── 대시보드 오버레이 ── */
   #dash {
