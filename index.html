@@ -549,13 +549,15 @@
     try {
       await submitScoreRemote(name, pts, m);
       btnNick.textContent = '등록 완료!';
+      boardMode = m;
+      renderBoard();
+      dash.classList.add('open');
     } catch {
-      btnNick.textContent = '등록 완료!';
-      toast('서버 연결 실패 — 이 기기에만 저장됐어요');
+      // 전송 실패 — 다시 누를 수 있게 되돌린다
+      nickForm.classList.remove('done');
+      btnNick.textContent = '실패 — 다시 시도';
+      toast('서버 연결 실패 — 등록 버튼을 다시 눌러주세요');
     }
-    boardMode = m;
-    renderBoard();
-    dash.classList.add('open');
   }
 
   // ── 게임 상태 ──
