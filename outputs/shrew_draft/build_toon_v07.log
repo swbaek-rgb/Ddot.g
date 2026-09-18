@@ -1,7 +1,0 @@
-00:00.307  blend            | Read blend: "/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_rig_before_toon_v07.blend"
-00:02.891  render           | Saved: '/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_toon_v07.png'
-Info: Saved as "shrew_toon_v07.blend"
-TOON_V07_VERIFIED {"geometry_and_rig_unchanged": true, "source_signature": "992761e23b5281e0d1719079938d222d2748ffd6821753f64f3d3cdea10bc8b7", "engine": "BLENDER_EEVEE", "toon_materials": ["TOON • Body • brown / dark nose gradient", "TOON • Legs & feet • textured brown", "TOON • Ear outer • matching brown", "TOON • Ear inner • warm clay", "TOON • Feet & tail • muted taupe"], "lighting": [{"name": "01 • KEY — main / left", "power": 1050.0, "location": [-3.0, -4.5, 6.0]}, {"name": "02 • FILL — soft / right", "power": 160.0, "location": [4.199999809265137, 0.5, 3.700000047683716]}, {"name": "03 • RIM — back edge", "power": 1000.0, "location": [-2.5, 3.5, 4.699999809265137]}]}
-Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:31:22)
-
-Blender quit

@@ -1,8 +1,0 @@
-00:00.480  blend            | Read blend: "/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_draft_v01.blend"
-00:18.068  render           | Saved: '/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_draft_v02.png'
-00:33.197  render           | Saved: '/Users/admin/Documents/github/Ddot.g/outputs/shrew_draft/shrew_draft_v02_top.png'
-Info: Saved as "shrew_draft_v02.blend"
-SHREW_V02_VERIFIED {'Body + head • one continuous surface': {'components': 1, 'nonmanifold_edges': 0, 'vertices': 408}, 'Hind.L • continuous leg & foot': {'components': 1, 'nonmanifold_edges': 0, 'vertices': 6195}, 'Front.L • continuous leg & foot': {'components': 1, 'nonmanifold_edges': 0, 'vertices': 5479}, 'Hind.R • continuous leg & foot': {'components': 1, 'nonmanifold_edges': 0, 'vertices': 6192}, 'Front.R • continuous leg & foot': {'components': 1, 'nonmanifold_edges': 0, 'vertices': 5480}}
-Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:31:22)
-
-Blender quit
