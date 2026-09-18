@@ -145,6 +145,11 @@
     animation: snackPop .3s ease-out, snackWiggle 1.1s ease-in-out .3s infinite;
   }
   .snack.out img { animation: snackOut .28s ease-in forwards; }
+  .snack-hint {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    margin-top: 6px; font-size: 28px; font-weight: 800; color: #111;
+    white-space: nowrap; animation: blink .5s steps(2) infinite;
+  }
   @keyframes snackPop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
   @keyframes snackWiggle { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
   @keyframes snackOut { to { transform: scale(0); opacity: 0; } }
@@ -609,6 +614,7 @@
   let deadline = 0;
   let eating = false, eatUntil = 0, heartClock = 0;
   let snackTimer = null;
+  let snackHintShown = false; // 판마다 첫 간식에만 click! 안내
 
   // 간식이 나타날 자리: 땃쥐·점수·안내문·가장자리를 피한 빈 곳에서 랜덤
   function snackSpot() {
@@ -639,6 +645,10 @@
     el.className = 'snack';
     el.style.left = x + 'px'; el.style.top = y + 'px';
     el.innerHTML = '<img src="assets/mealworm.svg">';
+    if (!snackHintShown) {
+      snackHintShown = true;
+      el.insertAdjacentHTML('beforeend', '<div class="snack-hint">click!</div>');
+    }
     el.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); eatSnack(el); });
     screens.game.appendChild(el);
     el._life = setTimeout(() => { removeSnack(); scheduleSnack(rand(7000, 10000)); }, rand(1800, 2800));
@@ -839,6 +849,7 @@
     timerEl.textContent = TA_TIME;
     if (mode === 'timeattack') {
       deadline = performance.now() + TA_TIME * 1000;
+      snackHintShown = false;
       scheduleSnack(rand(4000, 6000));
     }
     cursorImg.src = 'assets/hand1.svg';
