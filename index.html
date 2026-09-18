@@ -158,6 +158,17 @@
     100% { opacity: 0; transform: translate(var(--dx, 20px), -130px) scale(1.08) rotate(10deg); }
   }
 
+  /* ── 식사모드 안내 ── */
+  .eat-badge {
+    position: absolute; left: 50%; transform: translateX(-50%); top: 852px;
+    background: #fff; border: 3px solid #111; border-radius: 12px;
+    padding: 10px 30px; font-size: 30px; font-weight: 800; color: #111;
+    white-space: nowrap;
+  }
+  #caption-eat { top: 936px; }
+  body.portrait .eat-badge  { top: 1028px; }
+  body.portrait #caption-eat { top: 1108px; }
+
   /* ── 득점 플로터: 쓰다듬는 곳 옆에 +00 이 떠올랐다 사라진다 ── */
   .float-pt {
     position: fixed; pointer-events: none; z-index: 98;
@@ -345,6 +356,8 @@
     <div class="state-layer" id="layer-eat">
       <img id="mouse-eat1" class="abs" src="assets/mouse-eat1.svg">
       <img id="mouse-eat2" class="abs" src="assets/mouse-eat2.svg" style="display:none;">
+      <div class="eat-badge">식사 모드</div>
+      <div class="caption" id="caption-eat">아무리 눌러도 뒤돌아보지 않는 상태! 마음껏 쓰다듬자.</div>
     </div>
     <div class="score" id="score-game">000</div>
     <div id="timer">60</div>
@@ -603,7 +616,7 @@
     el.innerHTML = '<img src="assets/mealworm.svg">';
     el.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); eatSnack(el); });
     screens.game.appendChild(el);
-    el._life = setTimeout(() => { removeSnack(); scheduleSnack(rand(3000, 7000)); }, rand(2800, 4200));
+    el._life = setTimeout(() => { removeSnack(); scheduleSnack(rand(5000, 7000)); }, rand(1800, 2800));
   }
   function scheduleSnack(delay) {
     clearTimeout(snackTimer);
@@ -618,7 +631,7 @@
     clearTimeout(el._life);
     el.remove();
     startEating();
-    scheduleSnack(rand(4500, 8000));
+    scheduleSnack(rand(6000, 9000));
   }
   function startEating() {
     eating = true;
