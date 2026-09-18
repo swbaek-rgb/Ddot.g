@@ -220,8 +220,13 @@
   .mode-desc {
     position: absolute; left: 50%; transform: translateX(-50%); width: 413px; top: 429px;
     text-align: center; font-size: 38px; line-height: 1.3; color: #1A1818;
+    word-break: keep-all;
   }
   #mode-timeattack .mode-desc { top: 387px; }
+  /* 모바일: 문장 단위로 줄바꿈 */
+  body.portrait .mode-desc { width: 620px; }
+  body.portrait .mode-desc span { display: block; }
+  body.portrait #mode-timeattack .mode-desc { top: 415px; }
   .mode-start { left: 166px; top: 579px; width: 218px; height: 101px; border-width: 4px; }
 
   body.portrait .mode-slot { transform: scale(0.72); transform-origin: top left; }
@@ -397,14 +402,14 @@
       <div class="mode-card"></div>
       <div class="burst-box"><img src="assets/mode-burst.svg"></div>
       <img class="mode-title" id="mn-title" src="assets/txt-mode-normal.svg">
-      <div class="mode-desc">아이템과 시간제한이 없는 순수 실력 경쟁.</div>
+      <div class="mode-desc"><span>아이템과 시간제한이 없는</span> <span>순수 실력 경쟁.</span></div>
       <div class="btn btn-lg mode-start" data-mode="normal">Start</div>
     </div>
     <div class="mode-slot" id="mode-timeattack">
       <div class="mode-card"><div class="clock-clip"><img id="mt-clocks" src="assets/mode-clocks.svg"></div></div>
       <div class="burst-box"><img src="assets/mode-burst.svg"></div>
       <img class="mode-title" id="mt-title" src="assets/txt-mode-timeattack.svg">
-      <div class="mode-desc">정해진 시간 안에 많은 점수 내기. 간식을 던져 시간을 끌자!</div>
+      <div class="mode-desc"><span>정해진 시간 안에 많은 점수 내기.</span> <span>간식을 먹여 시간을 끌자!</span></div>
       <div class="btn btn-lg mode-start" data-mode="timeattack">Start</div>
     </div>
   </div>
